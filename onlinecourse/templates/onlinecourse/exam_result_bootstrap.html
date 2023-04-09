@@ -38,18 +38,41 @@
 <div class="container-fluid">
     {% if grade > 80 %}
     <div class="alert alert-success">
-       <!--HINT Display passed info -->
+       Congratulations {{ user.first_name }}! You passed with a score of {{ grade }}%
     </div>
-        {% else %}
-        <div class="alert alert-danger">
-            <!--HINT Display failed info -->
-        </div>
-        <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
-        {% endif %}
-        <div class="card-columns-vertical mt-1">
+    {% else %}
+    <div class="alert alert-danger">
+        Sorry, {{ user.first_name }}. You failed with a score of {{ grade }}%. Please click the Re-test link to try again.
+    </div>
+    <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
+    {% endif %}
+    <div class="card-columns-vertical mt-1">
         <h5 class="">Exam results</h5>
-            <!--HINT Display exam results-->
-        </div>
+        {% for question in course.question_set.all %}
+            <div class="card mt-1">
+                <div class="card-header">
+                    <h5>{{ question.question }}</h5>
+                </div>
+                <div class="form-group">
+                    {% for choice in question.choice_set.all %}
+                        {% if choice.correct_choice and choice in choices%}
+                            <div class="form-check text-success">
+                                Correct! {{choice.choice}}
+                            </div>
+                        {% elif not choice.correct_choice and choice in choices%}
+                            <div class="form-check text-danger">
+                                Incorrect! {{choice.choice}}
+                            </div>
+                        {% else %}
+                            <div class="form-check">
+                                {{choice.choice}}
+                            </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
     </div>
 </body>
 </html>
